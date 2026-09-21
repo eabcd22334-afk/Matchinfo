@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>JiSagor matchplan</title>
+<title>Ji Sagor Match Info</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <!-- Firebase (independent hosting version) -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <style>
   :root{
     --bg:#f4f6f5;
@@ -85,6 +86,8 @@
     cursor:pointer; color:var(--muted); transition:.15s;
   }
   .gear:hover{color:var(--accent);border-color:var(--accent);}
+  /* Admin settings button is hidden for normal visitors. It is revealed only by the admin URL gate. */
+.gear.admin-gate-hidden{display:none !important;}
   /* ---------- Section titles ---------- */
   .section-title{
     display:flex;align-items:center;gap:8px;
@@ -386,15 +389,20 @@
 
 <header>
   <div class="header-inner">
-    <div class="brand"><span class="ball">⚽</span> JiSagor Match Plan</div>
+    <div class="brand"><span class="ball">⚽</span> Ji Sagor Match Info</div>
     <div class="gear" id="gearBtn" title="Settings">⚙️</div>
   </div>
 </header>
-<div class="match-links" id="matchLinks"></div>
 
+  <div class="match-links" id="matchLinks"></div>
+
+  <div class="section-title">Pre Match Info</div>
+  <div class="match-card" id="matchCard"></div>
+  </div>
 
 <div class="wrap">
-<div class="section-title">ম্যাচ লাইনআপ</div>
+
+  <div class="section-title">ম্যাচ লাইনআপ</div>
   <div class="dual-pitch-grid">
     <div class="pitch-card team-pitch-card">
       <div class="pitch-label home-label"><span class="label-dot"></span> HOME LINEUP</div>
@@ -403,6 +411,8 @@
         <div class="half home" id="homeHalf"></div>
         <span class="team-tag home">HOME</span>
       </div>
+    </div>
+</div>
     </div>
     <div class="pitch-card team-pitch-card">
       <div class="pitch-label away-label"><span class="label-dot"></span> AWAY LINEUP</div>
@@ -425,36 +435,26 @@
     </div>
   </div>
 
-  <div class="section-title">Pre Match Info</div>
-  <div class="match-card" id="matchCard"></div>
 
-</div>
+
 
 <footer>
-  © jisagor matchplan<br>
+  © jisagor squad<br>
   Created by <b>Sagor</b>
   
 </footer>
 
-<!-- password overlay -->
-<div class="overlay" id="pwOverlay">
-  <div class="modal">
-    <h2>🔒 অ্যাডমিন এক্সেস</h2>
-    <p>পরিবর্তন করতে পাসওয়ার্ড দিন</p>
-    <div class="row-gap">
-      <input type="password" id="pwInput" placeholder="পাসওয়ার্ড লিখুন">
-      <div class="err-msg" id="pwErr"></div>
-      <button class="btn btn-primary btn-block" id="pwSubmit">প্রবেশ করুন</button>
-      <button class="btn btn-ghost btn-block" id="pwCancel">বাতিল</button>
-    </div>
-  </div>
-</div>
-
 <!-- admin panel -->
 <div class="admin-panel" id="adminPanel">
   <div class="admin-top">
-    <h2>⚙️ অ্যাডমিন প্যানেল</h2>
-    <div class="close-x" id="adminClose">✕</div>
+    <div>
+      <h2>⚙️ অ্যাডমিন প্যানেল</h2>
+      <div id="adminUserEmail" style="font-size:11px;color:var(--muted);margin-top:2px;"></div>
+    </div>
+    <div style="display:flex;gap:7px;align-items:center;">
+      <button class="btn btn-ghost" id="adminLogout" style="padding:7px 10px;font-size:12px;">Logout</button>
+      <div class="close-x" id="adminClose">✕</div>
+    </div>
   </div>
   <div class="admin-body">
     <div class="tabs">
@@ -477,6 +477,23 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Firebase Email + Password Admin Login -->
+<div id="adminAuthModal" aria-hidden="true">
+  <div class="auth-box">
+    <h3>🔐 Admin Login</h3>
+    <p>Firebase Email + Password দিয়ে অ্যাডমিন প্যানেলে প্রবেশ করুন।</p>
+    <form id="firebaseLoginForm">
+      <input id="authEmail" type="email" autocomplete="username" placeholder="Admin Email" required>
+      <input id="authPassword" type="password" autocomplete="current-password" placeholder="Password" required>
+      <div id="authError"></div>
+      <div class="auth-actions">
+        <button type="button" class="btn btn-ghost" id="authCancelBtn">বাতিল</button>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
 /* ================= CONFIG ================= */
@@ -522,6 +539,8 @@ const firebaseConfig = {
 };
 
 let fsDB = null;
+let fbAuth = null;
+let currentAdminUser = null;
 let unsubs = [];
 const uid = () => Math.random().toString(36).slice(2,10);
 
@@ -548,9 +567,18 @@ function setConnStatus(text, good=true){
   renderAll();
 
   try{
-    firebase.initializeApp(firebaseConfig);
-const auth = getAuth(app);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    fbAuth = firebase.auth();
     fsDB = firebase.firestore();
+
+    fbAuth.onAuthStateChanged(user => {
+      currentAdminUser = user || null;
+      updateAdminAuthUI();
+      if (!user) {
+        adminOpen = false;
+        adminPanel?.classList.remove('show');
+      }
+    });
   }catch(e){
     console.error("Firebase init failed", e);
     fsDB = null;
@@ -760,41 +788,129 @@ function formatMatchTime(v){
 }
 function field(icon,k,v){ return `<div class="match-field"><div class="match-icon">${icon}</div><div class="match-field-text"><span class="k">${k}</span><span class="v">${escapeHtml(v)}</span></div></div>`; }
 
-/* ================= PASSWORD / ADMIN TOGGLE ================= */
+/* ================= FIREBASE EMAIL/PASSWORD ADMIN AUTH ================= */
 let adminOpen = false;
-const pwOverlay = document.getElementById('pwOverlay');
-const adminPanel = document.getElementById('adminPanel');
 
-document.getElementById('gearBtn').onclick = () => {
-  document.getElementById('pwInput').value = "";
-  document.getElementById('pwErr').textContent = "";
-  pwOverlay.classList.add('show');
-  setTimeout(()=>document.getElementById('pwInput').focus(), 50);
-};
-document.getElementById('pwCancel').onclick = () => pwOverlay.classList.remove('show');
-document.getElementById('pwSubmit').onclick = submitPassword;
-document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==='Enter') submitPassword(); });
+/* ================= HIDDEN ADMIN ENTRY =================
+   Normal visitors do not see the settings button.
+   Open the page with ?admin=admin69 to reveal it.
+   Firebase Email/Password authentication is still required
+   before the actual admin panel can be opened.
+========================================================= */
+(function setupHiddenAdminEntry(){
+  const params = new URLSearchParams(window.location.search);
+  const adminGate = params.get("admin") === "admin69";
+  const gear = document.getElementById("gearBtn");
 
-function submitPassword(){
-  const v = document.getElementById('pwInput').value;
-  if(v === ADMIN_PASSWORD){
-    pwOverlay.classList.remove('show');
-    openAdmin();
-  }else{
-    document.getElementById('pwErr').textContent = "ভুল পাসওয়ার্ড, আবার চেষ্টা করুন";
+  window.__adminGateUnlocked = adminGate;
+
+  if (gear) {
+    gear.classList.toggle("admin-gate-hidden", !adminGate);
+    gear.setAttribute("aria-hidden", adminGate ? "false" : "true");
   }
+
+  // Remove the gate from the visible URL after reading it.
+  // This does not authenticate anyone; Firebase login remains required.
+  if (adminGate && window.history && window.history.replaceState) {
+    const cleanUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
+})();
+
+const adminPanel = document.getElementById('adminPanel');
+const adminAuthModal = document.getElementById('adminAuthModal');
+const firebaseLoginForm = document.getElementById('firebaseLoginForm');
+const authEmail = document.getElementById('authEmail');
+const authPassword = document.getElementById('authPassword');
+const authError = document.getElementById('authError');
+const authCancelBtn = document.getElementById('authCancelBtn');
+
+function openAdminLogin(){
+  if(currentAdminUser){ openAdmin(); return; }
+  if(authError) authError.textContent = "";
+  if(authEmail) authEmail.value = "";
+  if(authPassword) authPassword.value = "";
+  adminAuthModal?.classList.add('show');
+  adminAuthModal?.setAttribute('aria-hidden','false');
+  setTimeout(()=>authEmail?.focus(),50);
+}
+function closeAdminLogin(){
+  adminAuthModal?.classList.remove('show');
+  adminAuthModal?.setAttribute('aria-hidden','true');
+  if(authError) authError.textContent = "";
 }
 function openAdmin(){
+  if(!currentAdminUser){ openAdminLogin(); return; }
   adminOpen = true;
-  adminPanel.classList.add('show');
+  adminPanel?.classList.add('show');
   renderAdminHome(); renderAdminAway(); renderAdminRandom(); renderAdminMatch();
 }
-document.getElementById('adminClose').onclick = () => { adminOpen=false; adminPanel.classList.remove('show'); };
+function updateAdminAuthUI(){
+  const el=document.getElementById('adminUserEmail');
+  if(el) el.textContent=currentAdminUser ? currentAdminUser.email : '';
+}
+
+document.getElementById('gearBtn').onclick = () => {
+  const params = new URLSearchParams(window.location.search);
+  // The URL is cleaned after the initial gate, so use the one-time unlock flag.
+  if (!window.__adminGateUnlocked) return;
+  openAdminLogin();
+};
+window.__adminGateUnlocked = true;
+authCancelBtn?.addEventListener('click', closeAdminLogin);
+
+firebaseLoginForm?.addEventListener('submit', async e=>{
+  e.preventDefault();
+  if(!fbAuth){
+    if(authError) authError.textContent="Firebase Authentication প্রস্তুত হয়নি।";
+    return;
+  }
+  const email=(authEmail?.value||'').trim();
+  const password=authPassword?.value||'';
+  if(!email || !password){
+    if(authError) authError.textContent="ইমেইল এবং পাসওয়ার্ড দিন।";
+    return;
+  }
+  if(authError) authError.textContent="";
+  const btn=firebaseLoginForm.querySelector('button[type="submit"]');
+  if(btn){btn.disabled=true;btn.textContent="Logging in...";}
+  try{
+    await fbAuth.signInWithEmailAndPassword(email,password);
+    if(authPassword) authPassword.value="";
+    closeAdminLogin();
+    openAdmin();
+  }catch(error){
+    console.error("Firebase admin login error:",error);
+    const code=error?.code||"";
+    if(code.includes("invalid-credential")||code.includes("wrong-password")||code.includes("user-not-found")){
+      if(authError) authError.textContent="ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।";
+    }else if(code.includes("too-many-requests")){
+      if(authError) authError.textContent="অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।";
+    }else if(code.includes("operation-not-allowed")){
+      if(authError) authError.textContent="Firebase Console থেকে Email/Password Sign-in চালু করুন।";
+    }else{
+      if(authError) authError.textContent="Login failed: "+(error?.message||"Firebase Authentication সেটআপ চেক করুন।");
+    }
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent="Login";}
+  }
+});
+
+document.getElementById('adminClose').onclick=()=>{
+  adminOpen=false;
+  adminPanel?.classList.remove('show');
+};
+document.getElementById('adminLogout')?.addEventListener('click',async()=>{
+  try{
+    if(fbAuth) await fbAuth.signOut();
+    toast("Admin logout হয়েছে");
+  }catch(e){ console.error("Logout error:",e); }
+});
 
 document.querySelectorAll('.tab').forEach(tab=>{
-  tab.onclick = () => {
+  tab.onclick=()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.panel-section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.panel-section').forEach(x=>x.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
   };
@@ -1022,169 +1138,10 @@ function renderAdminMatch(){
   };
 }
 
-// Firebase Email/Password Admin Authentication
-const adminAuthModal = document.getElementById("adminAuthModal");
-const firebaseLoginForm = document.getElementById("firebaseLoginForm");
-const authEmail = document.getElementById("authEmail");
-const authPassword = document.getElementById("authPassword");
-const authError = document.getElementById("authError");
-const authCancelBtn = document.getElementById("authCancelBtn");
-
-function openAdminLogin(){
-  adminAuthModal?.classList.add("show");
-  adminAuthModal?.setAttribute("aria-hidden", "false");
-  setTimeout(() => authEmail?.focus(), 50);
-}
-
-function closeAdminLogin(){
-  adminAuthModal?.classList.remove("show");
-  adminAuthModal?.setAttribute("aria-hidden", "true");
-  if (authError) authError.textContent = "";
-}
-
-window.adminLogin = openAdminLogin;
-
-authCancelBtn?.addEventListener("click", closeAdminLogin);
-
-firebaseLoginForm?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (authError) authError.textContent = "";
-
-  try {
-    await signInWithEmailAndPassword(
-      auth,
-      authEmail.value.trim(),
-      authPassword.value
-    );
-    authPassword.value = "";
-    closeAdminLogin();
-  } catch (error) {
-    console.error("Firebase login error:", error);
-    const code = error?.code || "";
-    if (code.includes("invalid-credential") || code.includes("wrong-password") || code.includes("user-not-found")) {
-      authError.textContent = "Email অথবা password সঠিক নয়।";
-    } else if (code.includes("too-many-requests")) {
-      authError.textContent = "অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।";
-    } else {
-      authError.textContent = "Login failed. Firebase Authentication সেটআপ চেক করুন।";
-    }
-  }
-});
-
-onAuthStateChanged(auth, (user) => {
-  // Existing admin UI uses the global isAdmin flag.
-  window.isAdmin = !!user;
-  if (!user) {
-    document.body.classList.remove("admin-authenticated");
-  } else {
-    document.body.classList.add("admin-authenticated");
-  }
-
-  // Keep the existing admin rendering logic working if these functions exist.
-  if (typeof renderAll === "function") renderAll();
-});
-
-window.adminLogout = async function(){
-  try {
-    await signOut(auth);
-  } catch (e) {
-    console.error("Logout error:", e);
-  }
-};
 
 </script>
 
-<div id="adminAuthModal" aria-hidden="true">
-  <div class="auth-box">
-    <h3>Admin Login</h3>
-    <p>Firebase Email + Password দিয়ে লগইন করুন।</p>
-    <form id="firebaseLoginForm">
-      <input id="authEmail" type="email" autocomplete="username" placeholder="Email address" required>
-      <input id="authPassword" type="password" autocomplete="current-password" placeholder="Password" required>
-      <div id="authError"></div>
-      <div class="auth-actions">
-        <button type="button" class="btn secondary" id="authCancelBtn">Cancel</button>
-        <button type="submit" class="btn primary">Login</button>
-      </div>
-    </form>
-  </div>
-</div>
 
-
-<script>
-(function () {
-  const allowed = new URLSearchParams(location.search).get("admin") === "admin69";
-
-  function lockAdmin() {
-    if (allowed) return;
-
-    document.querySelectorAll(
-      '#adminPanel, .admin-panel, [data-tab="admin"], #adminTab, .admin-only'
-    ).forEach(el => el.style.display = 'none');
-
-    document.querySelectorAll('.tab, button, a').forEach(el => {
-      const t = (el.textContent || '').trim().toLowerCase();
-      if (['admin','admin panel','এডমিন','এডমিন প্যানেল'].includes(t)) {
-        el.style.display = 'none';
-      }
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', lockAdmin);
-  } else {
-    lockAdmin();
-  }
-})();
-</script>
-
-
-<script id="admin69-gate">
-(() => {
-  const isAdminURL = new URLSearchParams(window.location.search).get("admin") === "admin69";
-
-  function hideAdminUI() {
-    if (isAdminURL) return;
-
-    const selectors = [
-      '#adminPanel', '.admin-panel', '.admin-only',
-      '[data-tab="admin"]', '#adminTab'
-    ];
-
-    document.querySelectorAll(selectors.join(',')).forEach(el => {
-      el.style.display = 'none';
-      el.setAttribute('aria-hidden', 'true');
-    });
-
-    document.querySelectorAll('.tab, button, a').forEach(el => {
-      const text = (el.textContent || '').trim().toLowerCase();
-      if (text === 'admin' || text === 'admin panel' ||
-          text === 'এডমিন' || text === 'এডমিন প্যানেল') {
-        el.style.display = 'none';
-      }
-    });
-  }
-
-  function enforce() {
-    hideAdminUI();
-    if (!isAdminURL) {
-      // Close/hide any admin container that may be shown by existing code.
-      const panel = document.querySelector('#adminPanel, .admin-panel');
-      if (panel) panel.style.display = 'none';
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', enforce);
-  } else {
-    enforce();
-  }
-
-  // Catch UI changes made later by existing render functions.
-  const observer = new MutationObserver(enforce);
-  observer.observe(document.documentElement, {childList:true, subtree:true});
-})();
-</script>
 
 </body>
 </html>
