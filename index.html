@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ji Sagor Match Info</title>
+<title>Ji Sagor Squad</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -389,7 +389,7 @@
 
 <header>
   <div class="header-inner">
-    <div class="brand"><span class="ball">⚽</span> Ji Sagor Match Info</div>
+    <div class="brand"><span class="ball">⚽</span> Ji Sagor Squad</div>
     <div class="gear" id="gearBtn" title="Settings">⚙️</div>
   </div>
 </header>
@@ -441,7 +441,7 @@
 <footer>
   © jisagor squad<br>
   Created by <b>Sagor</b>
-  
+  <div class="conn-note" id="connNote"></div>
 </footer>
 
 <!-- admin panel -->
@@ -591,6 +591,9 @@ function setConnStatus(text, good=true){
   subscribe("team", "home", d => { state.home = normalizeTeam(d); renderAll(); if(adminOpen) renderAdminHome(); });
   subscribe("team", "away", d => { state.away = normalizeTeam(d); renderAll(); if(adminOpen) renderAdminAway(); });
   subscribe("match", "next", d => { state.nextMatch = Object.assign({}, state.nextMatch, d || {}); renderMatchLinks(); renderMatch(); if(adminOpen) renderAdminMatch(); });
+
+  // Start a server-side refresh fallback for Messenger/Facebook in-app browser.
+  startWebviewSync();
 })();
 
 function normalizeTeam(d){
@@ -602,21 +605,108 @@ function subscribe(collection, docId, cb){
   if(!fsDB) return;
   try{
     const path = `${collection}/${docId}`;
-    const off = fsDB.collection(collection).doc(docId).onSnapshot(
+    const ref = fsDB.collection(collection).doc(docId);
+
+    const off = ref.onSnapshot(
+      { includeMetadataChanges: true },
       snap => {
         const data = snap && snap.exists ? snap.data() : null;
         if(data) cacheSet(path, data);
         cb(data);
+
+        if(snap && !snap.metadata.fromCache){
+          setConnStatus("🟢 Firebase লাইভ — ডেটা স্বয়ংক্রিয়ভাবে সিঙ্ক হচ্ছে");
+        }
       },
       err => {
         console.error("subscribe error", collection, docId, err);
         const cached = cacheGet(path);
         if(cached) cb(cached);
-        setConnStatus("🟠 Firebase সাময়িকভাবে সংযোগহীন — লোকাল সেভ চলছে");
+        setConnStatus("🟠 Firebase সংযোগে সমস্যা — আবার চেষ্টা করা হচ্ছে");
       }
     );
     unsubs.push(off);
-  }catch(e){ console.error("subscribe failed", collection, docId, e); }
+  }catch(e){
+    console.error("subscribe failed", collection, docId, e);
+  }
+}
+
+/* Messenger/Facebook in-app browser can keep an old page alive.
+   Force a fresh SERVER read when the page becomes visible/online again.
+   This does not replace realtime onSnapshot; it is a fallback for webviews. */
+let serverRefreshBusy = false;
+
+async function refreshFirebaseFromServer(){
+  if(!fsDB || serverRefreshBusy) return;
+  serverRefreshBusy = true;
+
+  try{
+    const refs = [
+      ["team/home", fsDB.collection("team").doc("home")],
+      ["team/away", fsDB.collection("team").doc("away")],
+      ["match/next", fsDB.collection("match").doc("next")]
+    ];
+
+    const snaps = await Promise.all(refs.map(async ([path, ref]) => {
+      try{
+        const snap = await ref.get({source:"server"});
+        return [path, snap];
+      }catch(err){
+        console.warn("Server refresh failed:", path, err);
+        return [path, null];
+      }
+    }));
+
+    for(const [path, snap] of snaps){
+      if(!snap || !snap.exists) continue;
+      const data = snap.data();
+      cacheSet(path, data);
+
+      if(path === "team/home"){
+        state.home = normalizeTeam(data);
+      }else if(path === "team/away"){
+        state.away = normalizeTeam(data);
+      }else if(path === "match/next"){
+        state.nextMatch = Object.assign({}, state.nextMatch, data || {});
+      }
+    }
+
+    renderAll();
+    if(adminOpen){
+      renderAdminHome();
+      renderAdminAway();
+      renderAdminRandom();
+      renderAdminMatch();
+    }
+
+    setConnStatus("🟢 Firebase লাইভ — সর্বশেষ ডেটা লোড হয়েছে");
+  }catch(e){
+    console.error("Firebase server refresh error:", e);
+    setConnStatus("🟠 Firebase সাময়িকভাবে সংযোগহীন — আবার চেষ্টা করা হবে");
+  }finally{
+    serverRefreshBusy = false;
+  }
+}
+
+function startWebviewSync(){
+  refreshFirebaseFromServer();
+
+  document.addEventListener("visibilitychange", () => {
+    if(document.visibilityState === "visible") refreshFirebaseFromServer();
+  });
+
+  window.addEventListener("pageshow", () => {
+    refreshFirebaseFromServer();
+  });
+
+  window.addEventListener("online", () => {
+    refreshFirebaseFromServer();
+  });
+
+  // Extra fallback for Messenger/in-app browsers that keep the tab alive.
+  setInterval(() => {
+    if(document.visibilityState === "visible") refreshFirebaseFromServer();
+  }, 30000);
 }
 
 async function saveDoc(path, data){
@@ -690,7 +780,9 @@ function renderPitch(){
     // Each lineup now has its own full pitch.
     // GK stays at the team's goal; forwards stay toward the opposite end.
     // Position width is preserved: LEFT = left, CENTRAL = center, RIGHT = right.
-    const rowCodes = [["GK"],["CB"],["LB","LWB","RB","RWB"],["CDM","CM","CAM","LM","RM"],["LW","RW","ST","CF"]];
+    const rowCodes = side === "home"
+      ? [["LW","RW","ST","CF"],["CDM","CM","CAM","LM","RM"],["LB","LWB","RB","RWB"],["CB"],["GK"]]
+      : [["GK"],["CB"],["LB","LWB","RB","RWB"],["CDM","CM","CAM","LM","RM"],["LW","RW","ST","CF"]];
     const rows = rowCodes.map(codes=>{
       const rowPlayers = starters.filter(p=>codes.includes(p.position));
       if(!rowPlayers.length) return "";
@@ -705,7 +797,7 @@ function renderPitch(){
       return `<div class="row">${Object.entries(grouped).map(([z,ps])=>ps.length?`<div class="zone ${z}"><div class="zone-stack">${ps.map(p=>playerCard(p,side)).join("")}</div></div>`:"").join("")}</div>`;
     }).filter(Boolean);
 
-    // Home is rendered bottom-to-top by CSS flex order; away is flipped.
+    // Home and Away are both rendered upright.
     half.innerHTML = rows.join("");
   });
 }
