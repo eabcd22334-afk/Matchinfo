@@ -75,7 +75,7 @@
     /* Mobile background */
     background-image:
       linear-gradient(180deg,rgba(2,6,20,.10) 0%,rgba(2,6,20,.18) 55%,rgba(2,6,20,.62) 100%),
-      url("1791461944040.jpg");
+      url("https://png.pngtree.com/thumb_back/fh260/background/20230521/pngtree-an-old-style-library-with-shelves-full-of-books-image_2679112.jpg");
     background-position:center center;
     background-size:cover;
     background-repeat:no-repeat;
@@ -85,7 +85,7 @@
     .gameplan-hero{
       background-image:
         linear-gradient(180deg,rgba(2,6,20,.10) 0%,rgba(2,6,20,.18) 55%,rgba(2,6,20,.62) 100%),
-        url("1791461517334.jpg");
+        url("https://png.pngtree.com/thumb_back/fh260/background/20230521/pngtree-an-old-style-library-with-shelves-full-of-books-image_2679112.jpg");
     }
   }
   .gameplan-hero::before{
@@ -325,7 +325,7 @@
     padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
   }
   footer .heart{color:var(--accent);}
-  /* ---------- Overlay / Admin ---------- */
+ /* ---------- Overlay / Admin ---------- */
   .overlay{
     position:fixed; inset:0; background:rgba(2,5,16,.72); z-index:100;
     display:none; align-items:center; justify-content:center; padding:16px;
@@ -570,6 +570,210 @@
   }
 </style>
 
+<style id="premium-2-style">
+
+ /* =========================================================
+   PREMIUM 2.0 — luxury matchday UI
+   ========================================================= */
+:root{
+  --premium-blue:#3ab8ff;
+  --premium-cyan:#65e8ff;
+  --premium-violet:#7b61ff;
+  --premium-gold:#ffd86a;
+  --premium-glass:rgba(8,16,42,.62);
+  --premium-border:rgba(130,195,255,.22);
+}
+
+body{
+  background:
+    radial-gradient(900px 560px at 8% -10%,rgba(58,184,255,.18),transparent 62%),
+    radial-gradient(850px 520px at 100% 20%,rgba(123,97,255,.13),transparent 62%),
+    linear-gradient(180deg,#030611 0%,#050814 48%,#030611 100%);
+}
+
+.wrap{max-width:1080px;padding-left:18px;padding-right:18px;}
+.header-inner{max-width:1080px;padding:12px 18px;}
+header{position:sticky;top:0;}
+.brand{font-size:24px;letter-spacing:2.2px;}
+.gear{
+  width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(145deg,rgba(20,46,100,.75),rgba(6,12,30,.92));
+  border-color:rgba(101,232,255,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 24px rgba(0,0,0,.28);
+}
+.gear:hover{transform:translateY(-2px) rotate(8deg);}
+
+.gameplan-hero{
+  min-height:calc(100svh - 66px);
+  min-height:calc(100vh - 66px);
+  border-bottom:1px solid rgba(101,232,255,.13);
+  background-image:
+    linear-gradient(90deg,rgba(2,5,18,.92) 0%,rgba(2,6,20,.72) 38%,rgba(2,6,20,.30) 72%,rgba(2,6,20,.60) 100%),
+    linear-gradient(180deg,rgba(2,6,20,.10),rgba(2,6,20,.72)),
+    url("https://png.pngtree.com/thumb_back/fh260/background/20230521/pngtree-an-old-style-library-with-shelves-full-of-books-image_2679112.jpg");
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+}
+.gameplan-hero::before{
+  height:45%;
+  background:linear-gradient(0deg,#050814 0%,rgba(5,8,20,.42) 52%,transparent 100%);
+}
+.gameplan-hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 72% 45%,rgba(58,184,255,.13),transparent 28%);
+  mix-blend-mode:screen;
+}
+.gameplan-inner{width:min(1080px,92%);justify-content:flex-start;}
+.hero-content{
+  position:relative;z-index:2;
+  width:min(620px,100%);
+  padding:42px 0 42px 5%;
+  animation:heroEnter .9s cubic-bezier(.2,.8,.2,1) both;
+}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:10px;
+  color:#9bdfff;font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:3px;
+  margin-bottom:18px;
+  animation:slideIn .7s .05s both;
+}
+.hero-eyebrow span{width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--premium-cyan));}
+.hero-eyebrow span:last-child{background:linear-gradient(90deg,var(--premium-cyan),transparent);}
+.hero-title{
+  margin:0;
+  display:flex;flex-direction:column;
+  font-family:'Barlow Condensed','Poppins','Hind Siliguri',sans-serif;
+  font-style:italic;text-transform:uppercase;
+  font-size:clamp(52px,9vw,96px);
+  line-height:.82;letter-spacing:2px;
+  text-shadow:0 10px 40px rgba(0,0,0,.55);
+}
+.hero-title span:first-child{
+  color:#fff;
+  animation:slideIn .8s .12s both;
+}
+.hero-title span:last-child{
+  background:linear-gradient(100deg,#fff 0%,#75ddff 46%,#7b61ff 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 22px rgba(58,184,255,.22));
+  animation:slideIn .8s .22s both;
+}
+.hero-subtitle{
+  margin:24px 0 28px;
+  max-width:480px;color:#c5d7f4;
+  font-size:16px;line-height:1.8;
+  animation:slideIn .8s .32s both;
+}
+.gameplan-btn{
+  min-width:250px;width:max-content;
+  padding:17px 22px 17px 25px;
+  border-radius:15px;
+  justify-content:space-between;
+  gap:28px;
+  font-size:20px;
+  letter-spacing:2.5px;
+  background:
+    linear-gradient(135deg,rgba(10,39,104,.86),rgba(14,85,215,.72)) padding-box,
+    linear-gradient(135deg,#65e8ff,#327bff 55%,#ffd86a) border-box;
+  box-shadow:0 14px 42px rgba(30,140,255,.32),inset 0 1px 0 rgba(255,255,255,.18);
+  animation:slideIn .8s .42s both,ctaGlow 3.6s ease-in-out 1s infinite;
+}
+.cta-label{font-family:'Barlow Condensed',sans-serif;}
+.cta-arrow{
+  width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.14);
+  font-size:20px;
+}
+.hero-status{
+  display:flex;align-items:center;gap:8px;
+  margin-top:20px;color:rgba(214,230,255,.62);
+  font:600 10px/1 'Poppins',sans-serif;letter-spacing:1.7px;
+  animation:fadeUp .8s .55s both;
+}
+.hero-status i{
+  width:7px;height:7px;border-radius:50%;background:#59f2a4;
+  box-shadow:0 0 12px #59f2a4;animation:pulseDot 1.8s infinite;
+}
+.hero-orb{
+  position:absolute;border-radius:50%;pointer-events:none;filter:blur(1px);
+  border:1px solid rgba(101,232,255,.14);
+}
+.hero-orb-a{width:360px;height:360px;right:-90px;top:12%;box-shadow:0 0 90px rgba(58,184,255,.10);}
+.hero-orb-b{width:180px;height:180px;right:15%;bottom:8%;box-shadow:0 0 70px rgba(123,97,255,.12);border-color:rgba(123,97,255,.18);}
+.hero-noise{position:absolute;inset:0;opacity:.045;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");}
+
+.section-title{
+  margin-top:36px;
+  font-size:20px;
+  letter-spacing:2.8px;
+  color:#e7f2ff;
+}
+.section-title:before{
+  width:5px;height:22px;
+  box-shadow:0 0 16px var(--premium-cyan);
+}
+.pitch-card,.bench,.match-link,.card-box{
+  border-radius:20px;
+  border-color:var(--premium-border);
+  background:linear-gradient(145deg,rgba(17,35,82,.62),rgba(4,9,25,.92));
+  box-shadow:0 24px 65px rgba(0,6,30,.52),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.pitch-card{padding:13px;}
+.pitch-label{margin:3px 5px 11px;font-size:16px;}
+.pitch{border-radius:16px;}
+.bench{padding:16px;}
+.bench-item{padding:9px 10px;border-radius:12px;transition:transform .18s,border-color .18s,background .18s;}
+.bench-item:hover{transform:translateX(3px);border-color:rgba(101,232,255,.3);background:rgba(255,255,255,.065);}
+.match-card{
+  border-radius:24px;
+  padding:22px;
+  background:
+    radial-gradient(circle at 90% 5%,rgba(101,232,255,.24),transparent 27%),
+    radial-gradient(circle at 10% 100%,rgba(123,97,255,.16),transparent 30%),
+    linear-gradient(145deg,#061344 0%,#0a3cc8 48%,#03091f 100%);
+}
+.match-title{font-size:34px;}
+.match-datebox,.match-timebox{border-radius:18px;}
+.match-field{border-radius:15px;}
+.match-link{min-height:58px;border-radius:16px;}
+footer{padding-top:42px;}
+
+@keyframes heroEnter{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-32px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes pulseDot{50%{transform:scale(1.45);opacity:.65}}
+@media(max-width:760px){
+  .header-inner{padding:10px 14px;}
+  .brand{font-size:19px;letter-spacing:1.5px;}
+  .gameplan-hero{min-height:calc(100svh - 62px);min-height:calc(100vh - 62px);background-position:58% center;}
+  .gameplan-inner{width:92%;align-items:center;}
+  .hero-content{padding:30px 0 30px 2%;width:100%;}
+  .hero-eyebrow{font-size:10px;letter-spacing:2px;margin-bottom:15px;}
+  .hero-title{font-size:clamp(50px,15vw,74px);line-height:.84;}
+  .hero-subtitle{font-size:14px;line-height:1.7;margin:20px 0 24px;max-width:340px;}
+  .gameplan-btn{min-width:220px;padding:15px 17px 15px 20px;font-size:18px;}
+  .hero-status{font-size:9px;margin-top:16px;}
+  .hero-orb-a{width:230px;height:230px;right:-90px;top:10%;}
+  .hero-orb-b{width:120px;height:120px;right:6%;bottom:10%;}
+  .section-title{font-size:18px;margin-top:30px;}
+  .pitch-card{padding:10px;}
+  .match-card{padding:18px;border-radius:20px;}
+  .match-title{font-size:28px;}
+}
+@media(max-width:420px){
+  .hero-title{font-size:49px;}
+  .hero-eyebrow{font-size:9px;letter-spacing:1.6px;}
+  .hero-subtitle{font-size:13px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-content,.hero-eyebrow,.hero-title span,.hero-subtitle,.gameplan-btn,.hero-status{animation:none!important;}
+  .hero-status i{animation:none!important;}
+}
+
+</style>
 <style id="firebase-auth-style">
   #adminAuthModal {
     position: fixed;
@@ -609,6 +813,101 @@
   #authError { color:#ff7d7d; min-height:20px; margin-top:8px; font-size:13px; }
 </style>
 
+
+<style id="premium-cta-v3">
+/* Premium Hero CTA — refined */
+.gameplan-hero .gameplan-btn.premium-cta{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  min-width:206px;
+  padding:6px 7px 6px 22px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.045)),
+    rgba(8,14,28,.48);
+  color:#fff;
+  text-decoration:none;
+  box-shadow:
+    0 16px 45px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.12);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  overflow:hidden;
+  isolation:isolate;
+  transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+}
+.gameplan-hero .gameplan-btn.premium-cta::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.18) 50%,transparent 75%);
+  transform:translateX(-120%);
+  transition:transform .7s ease;
+  z-index:-1;
+}
+.gameplan-hero .gameplan-btn.premium-cta .cta-label{
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.18em;
+  line-height:1;
+  white-space:nowrap;
+}
+.gameplan-hero .gameplan-btn.premium-cta .cta-arrow{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  flex:0 0 40px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#7dd3fc,#38bdf8 55%,#818cf8);
+  color:#06111f;
+  font-size:1.05rem;
+  font-weight:900;
+  box-shadow:0 8px 22px rgba(56,189,248,.30);
+  transition:transform .35s ease;
+}
+.gameplan-hero .gameplan-btn.premium-cta:hover{
+  transform:translateY(-3px);
+  border-color:rgba(125,211,252,.55);
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.34),
+    0 0 30px rgba(56,189,248,.14),
+    inset 0 1px 0 rgba(255,255,255,.16);
+}
+.gameplan-hero .gameplan-btn.premium-cta:hover::before{
+  transform:translateX(120%);
+}
+.gameplan-hero .gameplan-btn.premium-cta:hover .cta-arrow{
+  transform:rotate(7deg) scale(1.06);
+}
+.gameplan-hero .gameplan-btn.premium-cta:active{
+  transform:translateY(-1px) scale(.985);
+}
+@media (max-width:520px){
+  .gameplan-hero .gameplan-btn.premium-cta{
+    min-width:190px;
+    padding-left:19px;
+    gap:14px;
+  }
+  .gameplan-hero .gameplan-btn.premium-cta .cta-arrow{
+    width:38px;
+    height:38px;
+    flex-basis:38px;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .gameplan-hero .gameplan-btn.premium-cta,
+  .gameplan-hero .gameplan-btn.premium-cta::before,
+  .gameplan-hero .gameplan-btn.premium-cta .cta-arrow{
+    transition:none;
+  }
+}
+</style>
+
 </head>
 <body>
 <header>
@@ -619,10 +918,23 @@
 </header>
 
 <section class="gameplan-hero" aria-label="Game Plan intro">
+  <div class="hero-noise" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb-a" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb-b" aria-hidden="true"></div>
   <div class="gameplan-inner">
-    <a class="gameplan-btn" href="#gamePlan" aria-label="See Game Plan">
-      See Game Plan <span>↓</span>
-    </a>
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span></span> MATCHDAY • SQUAD UPDATE <span></span></div>
+      <h1 class="hero-title">
+        <span></span>
+        <span>MATCH PLAN</span>
+      </h1>
+      <p class="hero-subtitle">See the information of match at a glance</p>
+      <a class="gameplan-btn premium-cta" href="#gamePlan" aria-label="Explore the match plan">
+             <span class="cta-label">EXPLORE MATCH</span>
+             <span class="cta-arrow" aria-hidden="true">↗</span>
+           </a>
+      <div class="hero-status"><i></i> READY FOR KICK-OFF</div>
+    </div>
   </div>
 </section>
 
@@ -792,6 +1104,7 @@ function setConnStatus(text, good=true){
   const el=document.getElementById('connNote');
   if(el){ el.textContent=text; el.style.opacity='1'; }
 }
+
 
 /* ================= BOOT ================= */
 (function boot(){
