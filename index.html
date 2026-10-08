@@ -8,7 +8,7 @@
 <title>Ji Sagor Match Plan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Barlow+Condensed:ital,wght@0,600;0,700;1,700;1,800&display=swap" rel="stylesheet">
 <!-- Firebase (independent hosting version) -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -59,12 +59,12 @@
   .wrap{max-width:920px;margin:0 auto;padding:0 14px 60px;}
   /* ---------- Top Game Plan Hero ---------- */
   html{scroll-behavior:smooth;}
-  #gamePlan{scroll-margin-top:84px;}
-  .top-wrap{padding-top:calc(72px + env(safe-area-inset-top, 0px));padding-bottom:6px;}
+  #gamePlan{scroll-margin-top:12px;}
+  .top-wrap{padding-top:14px;padding-bottom:6px;}
   .gameplan-hero{
     position:relative;
-    min-height:100vh;
-    min-height:100svh;
+    min-height:calc(100vh - 58px);
+    min-height:calc(100svh - 58px);
     width:100%;
     display:flex;
     align-items:center;
@@ -99,49 +99,48 @@
   }
   .gameplan-inner{
     width:min(92%,920px);
-    min-height:100vh;
-    min-height:100svh;
+    min-height:calc(100vh - 58px);
+    min-height:calc(100svh - 58px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
   .gameplan-btn{
-    position:absolute;
-    bottom:calc(38px + env(safe-area-inset-bottom, 0px));
-    left:50%;
-    transform:translateX(-50%);
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    gap:9px;
-    min-width:185px;
-    padding:14px 26px;
-    border:1px solid var(--accent2);
-    border-radius:6px;
-    background:linear-gradient(135deg,rgba(8,30,110,.78),rgba(10,70,220,.62));
+    gap:12px;
+    min-width:270px;
+    padding:22px 48px;
+    border:2px solid var(--accent2);
+    border-radius:8px;
+    background:linear-gradient(135deg,rgba(8,30,110,.82),rgba(10,70,220,.68));
     color:#fff;
     font-family:'Poppins','Hind Siliguri',sans-serif;
-    font-size:13px;
-    font-weight:700;
-    letter-spacing:.8px;
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:1px;
     text-transform:uppercase;
     text-decoration:none;
     backdrop-filter:blur(10px);
     -webkit-backdrop-filter:blur(10px);
-    box-shadow:0 0 26px rgba(30,140,255,.55),inset 0 0 14px rgba(34,211,255,.18);
+    box-shadow:0 0 34px rgba(30,140,255,.65),inset 0 0 18px rgba(34,211,255,.22);
     transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
   }
   .gameplan-btn:hover{
-    transform:translateX(-50%) translateY(-3px);
+    transform:translateY(-3px) scale(1.03);
     border-color:#fff;
-    box-shadow:0 0 38px rgba(34,211,255,.75),inset 0 0 18px rgba(34,211,255,.3);
+    box-shadow:0 0 46px rgba(34,211,255,.85),inset 0 0 22px rgba(34,211,255,.32);
   }
   .gameplan-btn:focus-visible{outline:2px solid #fff;outline-offset:3px;}
-  .gameplan-btn span{font-size:16px;line-height:1;}
+  .gameplan-btn span{font-size:24px;line-height:1;}
   @media(max-width:760px){
-    .gameplan-btn{bottom:calc(28px + env(safe-area-inset-bottom, 0px));min-width:170px;padding:13px 22px;}
+    .gameplan-btn{min-width:230px;padding:19px 34px;font-size:18px;}
   }
 
   /* ---------- Header ---------- */
   header{
-    position:fixed; top:0; left:0; right:0; z-index:40;
+    position:relative; z-index:40;
     padding-top: env(safe-area-inset-top, 0px);
     background:linear-gradient(180deg,rgba(5,8,20,.92),rgba(5,8,20,.78));
     backdrop-filter:blur(12px);
@@ -261,6 +260,12 @@
   }
   .badge-c.gold{background:linear-gradient(145deg,#f6da77,var(--gold));color:#4a3a05;}
   .badge-c.silver{background:linear-gradient(145deg,#eef2f3,var(--silver));color:#3d4245;}
+  /* Desktop: shorter pitches */
+  @media(min-width:761px){
+    .pitch.single-pitch{min-height:450px;}
+    .single-pitch .half{min-height:450px;padding:16px 5px;}
+    .pitch:after{width:90px;height:90px;}
+  }
   /* ---------- Bench ---------- */
   .bench-wrap{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px;}
   @media (max-width:520px){.bench-wrap{grid-template-columns:1fr;}}
@@ -351,7 +356,7 @@
   .btn-danger{background:#e0453a; color:#fff;}
   .btn-block{width:100%;}
   .err-msg{color:#e0453a; font-size:12.5px; min-height:16px; margin-top:6px;}
-  /* ---------- Admin panel ---------- */
+/* ---------- Admin panel ---------- */
   .admin-panel{
     position:fixed; inset:0; background:var(--bg); z-index:90; overflow-y:auto;
     display:none; padding-top: env(safe-area-inset-top, 0px);
@@ -419,6 +424,150 @@
 
 /* Save/connection status */
 #connNote{transition:opacity .25s ease, color .25s ease;}
+
+  /* =====================================================
+     PREMIUM LAYER — Blue Lock
+     ===================================================== */
+  ::selection{background:rgba(30,140,255,.55);color:#fff;}
+  html{scrollbar-width:thin;scrollbar-color:#1e5fd0 #050814;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-track{background:#050814;}
+  ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#22d3ff,#1e5fd0);border-radius:8px;}
+
+  /* fine grid texture behind everything */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(90,150,255,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(90,150,255,.045) 1px,transparent 1px);
+    background-size:54px 54px;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 0%,transparent 78%);
+            mask-image:radial-gradient(ellipse at 50% 30%,#000 0%,transparent 78%);
+  }
+
+  /* header: dark glass + light-line underline */
+  header{
+    background:linear-gradient(180deg,rgba(4,7,18,.96),rgba(6,12,32,.9));
+    border-bottom:none;
+    box-shadow:0 10px 40px rgba(0,30,120,.35);
+  }
+  header::after{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(34,211,255,.9) 25%,rgba(242,201,76,.75) 50%,rgba(34,211,255,.9) 75%,transparent);
+    box-shadow:0 0 14px rgba(34,211,255,.7);
+  }
+  .brand{
+    font-family:'Barlow Condensed','Poppins','Hind Siliguri',sans-serif;
+    font-weight:800; font-size:23px; letter-spacing:2px;
+    background:linear-gradient(180deg,#ffffff 30%,#9fd0ff 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    text-shadow:none; filter:drop-shadow(0 0 10px rgba(30,140,255,.65));
+  }
+  .brand .ball{-webkit-text-fill-color:initial;}
+
+  /* hero blends into the page */
+  .gameplan-hero::before{
+    height:30%;
+    background:linear-gradient(0deg,#050814 0%,rgba(5,8,20,.55) 45%,transparent 100%);
+  }
+  .gameplan-btn{
+    position:relative; overflow:hidden;
+    border:1px solid transparent;
+    background:
+      linear-gradient(135deg,rgba(6,20,80,.88),rgba(10,60,200,.74)) padding-box,
+      linear-gradient(135deg,#22d3ff,#1e5fd0 45%,#f2c94c) border-box;
+    font-family:'Barlow Condensed','Poppins',sans-serif;
+    font-size:26px; font-weight:700; letter-spacing:3px;
+    animation:ctaGlow 3.6s ease-in-out infinite;
+  }
+  .gameplan-btn::after{
+    content:""; position:absolute; top:0; bottom:0; width:60%; left:-80%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);
+    transform:skewX(-20deg); transition:left .7s ease;
+  }
+  .gameplan-btn:hover::after{left:130%;}
+  @keyframes ctaGlow{
+    0%,100%{box-shadow:0 0 28px rgba(30,140,255,.55),inset 0 0 16px rgba(34,211,255,.2);}
+    50%{box-shadow:0 0 46px rgba(34,211,255,.8),inset 0 0 22px rgba(34,211,255,.32);}
+  }
+  @media(max-width:760px){.gameplan-btn{font-size:22px;letter-spacing:2.4px;}}
+
+  /* section titles */
+  .section-title{
+    font-family:'Barlow Condensed','Poppins','Hind Siliguri',sans-serif;
+    font-size:18px; letter-spacing:2.4px; color:#cfe2ff; margin:28px 2px 12px;
+  }
+  .section-title::after{
+    content:""; flex:1; height:1px; margin-left:6px;
+    background:linear-gradient(90deg,rgba(34,211,255,.45),transparent);
+  }
+
+  /* glass cards */
+  .pitch-card,.bench,.match-link,.card-box{
+    background:linear-gradient(160deg,rgba(22,44,110,.5),rgba(7,13,34,.94) 60%);
+    border:1px solid rgba(120,175,255,.2);
+    box-shadow:0 18px 50px rgba(0,8,45,.6),inset 0 1px 0 rgba(255,255,255,.07);
+  }
+  .match-link:hover{box-shadow:0 0 22px rgba(30,140,255,.4),inset 0 1px 0 rgba(255,255,255,.1);}
+  .pitch-label{font-family:'Barlow Condensed','Poppins',sans-serif;font-size:15px;letter-spacing:2px;}
+
+  /* pitch */
+  .pitch{
+    background:
+      radial-gradient(ellipse at 50% 50%,rgba(40,120,255,.14) 0%,transparent 55%),
+      radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,4,22,.62) 100%),
+      repeating-linear-gradient(180deg,#0c2f7e 0 40px,#0a2767 40px 80px);
+    box-shadow:inset 0 0 0 1px rgba(150,210,255,.2),inset 0 0 40px rgba(0,10,60,.6);
+  }
+  :root{--pitch-line:rgba(160,215,255,.5);}
+
+  /* players */
+  .pcard .avatar{border:2px solid rgba(255,255,255,.92);font-weight:800;}
+  .pcard.home .avatar{
+    background:linear-gradient(145deg,#4cc9ff,#0a6cff);
+    box-shadow:0 0 0 3px rgba(20,168,255,.28),0 0 18px rgba(20,168,255,.7),0 4px 10px rgba(0,0,0,.5);
+  }
+  .pcard.away .avatar{
+    background:linear-gradient(145deg,#ff6a80,#d4142f);
+    box-shadow:0 0 0 3px rgba(255,59,87,.28),0 0 18px rgba(255,59,87,.65),0 4px 10px rgba(0,0,0,.5);
+  }
+  .team-tag{font-family:'Barlow Condensed','Poppins',sans-serif;font-size:13px;letter-spacing:1.8px;box-shadow:0 0 14px currentColor;}
+  .team-tag.home{background:linear-gradient(135deg,#14a8ff,#0a5be0);color:#fff;box-shadow:0 0 14px rgba(20,168,255,.7);}
+  .team-tag.away{background:linear-gradient(135deg,#ff5a72,#d4142f);color:#fff;box-shadow:0 0 14px rgba(255,59,87,.6);}
+  .badge-c.gold{box-shadow:0 0 12px rgba(242,201,76,.75),0 2px 4px rgba(0,0,0,.4);}
+
+  /* bench */
+  .bench-item{background:rgba(255,255,255,.04);border:1px solid rgba(120,175,255,.1);}
+  .bench-item .mini{background:rgba(30,140,255,.18);color:#bcd8ff;}
+  .bench-item .pos-tag{background:rgba(5,8,20,.6);border-color:rgba(120,175,255,.2);}
+
+  /* match card */
+  .match-card{
+    border:1px solid rgba(120,190,255,.35);
+    box-shadow:0 22px 60px rgba(0,40,170,.4),0 0 30px rgba(30,140,255,.2),inset 0 1px 0 rgba(242,201,76,.55);
+  }
+  .match-kicker{color:#7fe3ff;opacity:1;letter-spacing:2.4px;}
+  .match-title{font-family:'Barlow Condensed','Poppins','Hind Siliguri',sans-serif;font-size:30px;letter-spacing:1.2px;}
+  .match-datebox,.match-timebox{background:rgba(255,255,255,.07);border-color:rgba(160,210,255,.22);}
+  .match-timebox .v{font-family:'Barlow Condensed','Poppins',sans-serif;font-size:30px;letter-spacing:1px;color:#fff;text-shadow:0 0 16px rgba(34,211,255,.7);}
+
+  /* admin + inputs */
+  input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(30,140,255,.25);}
+  .btn-primary{background:linear-gradient(135deg,#2a9bff,#0b57e0);box-shadow:0 6px 18px rgba(20,100,255,.4);}
+  .modal,.auth-box{border-color:rgba(120,175,255,.25);box-shadow:0 24px 70px rgba(0,10,60,.7),0 0 30px rgba(30,140,255,.18);}
+
+  /* footer */
+  footer{position:relative;letter-spacing:.4px;}
+  footer::before{
+    content:""; display:block; width:120px; height:1px; margin:0 auto 18px;
+    background:linear-gradient(90deg,transparent,#f2c94c,transparent);
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .gameplan-btn{animation:none;}
+    .gameplan-btn::after{transition:none;}
+    html{scroll-behavior:auto;}
+  }
 </style>
 
 <style id="firebase-auth-style">
@@ -462,6 +611,13 @@
 
 </head>
 <body>
+<header>
+  <div class="header-inner">
+    <div class="brand"><span class="ball">⚽</span> Ji Sagor Match Plan</div>
+    <div class="gear" id="gearBtn" title="Settings">⚙️</div>
+  </div>
+</header>
+
 <section class="gameplan-hero" aria-label="Game Plan intro">
   <div class="gameplan-inner">
     <a class="gameplan-btn" href="#gamePlan" aria-label="See Game Plan">
@@ -470,13 +626,6 @@
   </div>
 </section>
 
-
-<header>
-  <div class="header-inner">
-    <div class="brand"><span class="ball">⚽</span> Ji Sagor Match Plan</div>
-    <div class="gear" id="gearBtn" title="Settings">⚙️</div>
-  </div>
-</header>
 
 <div class="wrap top-wrap">
   <div class="match-links" id="matchLinks"></div>
@@ -1091,7 +1240,6 @@ document.querySelectorAll('.tab').forEach(tab=>{
     document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
   };
 });
-
 /* ================= ADMIN: LINEUP EDITOR (home/away shared logic) ================= */
 function positionOptions(selected){
   return POSITIONS.map(p=>`<option value="${p.code}" ${p.code===selected?'selected':''}>${p.code} — ${p.label}</option>`).join("");
