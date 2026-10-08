@@ -73,20 +73,26 @@
     isolation:isolate;
     background-color:#050814;
     /* Mobile background */
-    background-image:
-      linear-gradient(180deg,rgba(2,6,20,.10) 0%,rgba(2,6,20,.18) 55%,rgba(2,6,20,.62) 100%),
-      url("1791461944040.jpg");
-    background-position:center center;
-    background-size:cover;
-    background-repeat:no-repeat;
+    @media (max-width: 768px) {
+    .gameplan-hero {
+        background-image:
+            linear-gradient(180deg, rgba(3,8,18,.68), rgba(3,8,18,.38)),
+            url("1791461944040.jpg");
+    }
+    }
   }
   /* Desktop background */
-  @media(min-width:761px){
-    .gameplan-hero{
-      background-image:
-        linear-gradient(180deg,rgba(2,6,20,.10) 0%,rgba(2,6,20,.18) 55%,rgba(2,6,20,.62) 100%),
-        url("1791461517334.jpg");
+  @media (min-width: 769px) {
+    .gameplan-hero {
+        background-image:
+            linear-gradient(90deg, rgba(3,8,18,.78), rgba(3,8,18,.30)),
+            url("1791461517334.jpg");
+
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
+  
   }
   .gameplan-hero::before{
     content:"";
